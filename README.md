@@ -16,6 +16,7 @@
 * `remote` currently doesn't support task arguments that contain `:` characters, due to the way that the script calls `str.split(':')` under the hood.
 * `remote` currently doesn't support the `-P`/`--parallel` flag.
 * `remote` currently doesn't support the `-C`/`--console` flag.
+* Currently only _one_ substitution of the form `[a,b,c...]` or `[x-y]` may be specified with a single string in the `hosts` key of a target specification in the framework configuration file, however you can easily get around this by just specifying multiple strings.
 
 ----
 # Usage
@@ -207,4 +208,4 @@ update_puppet   : Executes "puppet agent --test" on the specified target(s).
 ----
 # Framework Configuration File
 
-See `CONFIG.md` for more information.
+See `CONFIGURATION.md` for more information.
