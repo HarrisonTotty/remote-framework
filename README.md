@@ -47,7 +47,7 @@ Be sure to run `chmod +x /usr/local/bin/remote` after you've created the file.
 
 ## Basic Example
 
-`remote` is invoked by specifying a list of servers followed by the `--command`, `--console`, or `--run` arguments (or their shorthand aliases). The "list of servers" may correspond to specific hostnames _or_ a valid target within the script's corresponding configuration file (more on this below). The `--command` argument (or `-c` for short) is the simplest use case. This argument will execute the specified command on all of the supplied target machines. For example
+`remote` is invoked by specifying a list of servers followed by the `--command`, `--console`, or `--run` arguments (or their shorthand aliases). The "list of servers" may correspond to specific hostnames _or_ a valid target within the script's corresponding configuration file (see `CONFIGURATION.md`). The `--command` argument (or `-c` for short) is the simplest use case. This argument will execute the specified command on all of the supplied target machines. For example
 
 ```bash
 $ remote foo{1..5}.example.com -c 'echo hello world'
