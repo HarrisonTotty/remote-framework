@@ -180,6 +180,30 @@ $ remote foo{1..5}.example.com -r 'disable_puppet:Doing some debugging on these 
 The script supports the ability to run in a sort-of interactive terminal mode with the `-C`/`--console` flag.
 
 
+## Listing Targets and Tasks
+
+The script provides a convenient way to display what targets/tasks are available in the framework configuration file with the `--list-targets` and `--list-tasks` flags. When listing targets, the script displays the name of each target, followed by the list of hosts it corresponds to, like so:
+
+```
+$ remote --list-targets
+prd_all  : db-prd[1-8].example.com, web-prd[1-8].example.com
+prd_db   : db-prd[1-8].example.com
+prd_web  : web-prd[1-8].example.com
+tst_all  : db-tst[1-4].example.com, web-tst[1-4].example.com
+tst_db   : db-tst[1-4].example.com
+tst_web  : web-tst[1-4].example.com
+```
+
+Similarly, `--list-tasks` will display the names of each task, as well as the task's description (if it has one specified):
+
+```
+$ remote --list-tasks
+disable_puppet  : Disables the puppet agent on the specified target(s), with an optional message.
+enable_puppet   : Re-enables the puppet agent on the specified target(s).
+restart_tomcat  : Restarts the "tomcat" service on the specified target(s).
+update_puppet   : Executes "puppet agent --test" on the specified target(s).
+```
+
 ----
 # Framework Configuration File
 
