@@ -61,7 +61,7 @@ REMOTE_CERT             :  --cert
 REMOTE_COMMAND_TIMEOUT  :  --command-timeout
 REMOTE_CONFIG_FILE      :  --config-file
 REMOTE_LOG_FILE         :  --log-file
-REMOTE_LOG_LVL          :  --log-level
+REMOTE_LOG_LEVEL        :  --log-level
 REMOTE_LOG_MODE         :  --log-mode
 REMOTE_PASSWORD         :  --password
 REMOTE_PORT             :  --port
@@ -88,25 +88,17 @@ def _parse_arguments():
     Parses the command-line arguments into a global namespace called "args".
     '''
     # Do some pre-parsing for some of the environment variables to prevent crashes
-    if not os.getenv('REMOTE_LOG_LVL', 'info') in ['info', 'debug']:
-        sys.exit('Invalid value set for environment variable "REMOTE_LOG_LVL".')
+    if not os.getenv('REMOTE_LOG_LEVEL', 'info') in ['info', 'debug']:
+        sys.exit('Invalid value set for environment variable "REMOTE_LOG_LEVEL".')
     if not os.getenv('REMOTE_LOG_MODE', 'append') in ['append', 'overwrite']:
         sys.exit('Invalid value set for environment variable "REMOTE_LOG_MODE".')
-    try:
-        int(os.getenv('REMOTE_AUTH_TIMEOUT', '5'))
-    except Exception as e:
+    if not os.getenv('REMOTE_AUTH_TIMEOUT', '5').isdigit():
         sys.exit('Invalid value set for environment variable "REMOTE_AUTH_TIMEOUT".')
-    try:
-        int(os.getenv('REMOTE_COMMAND_TIMEOUT', '0'))
-    except Exception as e:
+    if not os.getenv('REMOTE_COMMAND_TIMEOUT', '0').isdigit():
         sys.exit('Invalid value set for environment variable "REMOTE_COMMAND_TIMEOUT".')
-    try:
-        int(os.getenv('REMOTE_TIMEOUT', '5'))
-    except Exception as e:
+    if not os.getenv('REMOTE_TIMEOUT', '5').isdigit():
         sys.exit('Invalid value set for environment variable "REMOTE_TIMEOUT".')
-    try:
-        int(os.getenv('REMOTE_PORT', '22'))
-    except Exception as e:
+    if not os.getenv('REMOTE_PORT', '22').isdigit():
         sys.exit('Invalid value set for environment variable "REMOTE_PORT".')
     argparser = argparse.ArgumentParser(
         description = HELP_DESCRIPTION,
@@ -211,7 +203,7 @@ def _parse_arguments():
         '-l',
         '--log-level',
         choices = ['info', 'debug'],
-        default = os.getenv('REMOTE_LOG_LVL', 'info'),
+        default = os.getenv('REMOTE_LOG_LEVEL', 'info'),
         dest = 'log_level',
         help = 'Specifies the log level of the script, being either "info" or "debug". Defaults to "info".',
         metavar = 'LVL'
