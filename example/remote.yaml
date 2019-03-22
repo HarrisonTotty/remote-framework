@@ -1,0 +1,43 @@
+# Example Remote Framework Configuration File
+# -------------------------------------------
+
+targets:
+  # ----- Tomcat Nodes -----
+  tomcat_nodes:
+    hosts:
+      - "foo[1-10].example.com"
+    user: "root"
+    password: "Un1ncrypt3d P455w0rd"
+
+  # ----- Apache Nodes -----
+  apache_nodes:
+    hosts:
+      - "bar[1,3,5].example.com"
+    user: "admin"
+    cert: "~/.ssh/apache-cert.pem"
+
+  # ----- MySQL Nodes -----
+  mysql_nodes:
+    hosts:
+      - "baz.example.com"
+      - "whamzo.example.com"
+
+tasks:
+  # ----- Run Puppet -----
+  run_puppet:
+    desc: "Executes a puppet run on the target machine(s)."
+    cmd: "puppet agent --test"
+
+  # ----- Install a Package -----
+  install:
+    desc: "Installs the specified package via yum."
+    cmd: "yum install $1"
+
+  # ----- Do something complicated -----
+  complex_example:
+    desc: "Does something a bit more complex."
+    cmd: >-
+      for i in {foo,bar,baz}; do
+        echo "Creating $i..."
+        touch $i
+      done
