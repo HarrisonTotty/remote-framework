@@ -10,6 +10,30 @@
 * [Paramiko](http://www.paramiko.org/)
 
 
+## Installation
+
+There is currently no installer, but here's the quick way to get up-and-running:
+
+1. Clone the repository into some directory with _full path_ `DIR`.
+
+2. Create a file called `/usr/local/bin/remote` with the following contents (replacing `DIR` with the _full path_ to your directory):
+
+```bash
+#!/bin/bash
+set -e
+
+# You can set environment variables for the script here:
+#export REMOTE_USER="root"
+
+cd DIR
+DIR/remote.py "$@"
+```
+
+Be sure to run `chmod +x /usr/local/bin/remote` after you've created the file.
+
+3. Now you can run `remote` like in the examples!
+
+
 ## Known Bugs & Potential Issues
 
 * `remote` currently doesn't supply any way for remote commands to attach to the executing terminal's standard input stream. This means that running commands like `less` on remote hosts will currently not work.
