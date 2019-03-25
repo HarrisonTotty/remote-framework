@@ -26,7 +26,7 @@ set -e
 #export REMOTE_USER="root"
 
 cd DIR
-DIR/remote.py "$@"
+DIR/remote.py $@
 ```
 
 Be sure to run `chmod +x /usr/local/bin/remote` after you've created the file.
