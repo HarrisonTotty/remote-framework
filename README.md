@@ -41,6 +41,7 @@ Be sure to run `chmod +x /usr/local/bin/remote` after you've created the file.
 * `remote` currently doesn't support the `-P`/`--parallel` flag.
 * `remote` currently doesn't support the `-C`/`--console` flag.
 * Currently only _one_ substitution of the form `[a,b,c...]` or `[x-y]` may be specified with a single string in the `hosts` key of a target specification in the framework configuration file, however you can easily get around this by just specifying multiple strings.
+* When writing multi-line task commands, use `cmd: |` instead of `cmd: >-` to preserve whitespace properly.
 
 ----
 # Usage
@@ -185,7 +186,7 @@ In addition to simple commands, tasks may actually be formulated into complex sc
 tasks:
   disable_puppet:
     desc: 'Disables the puppet agent on the specified target(s), with an optional message.'
-    cmd: >-
+    cmd: |
       if [ "$#" -eq 1 ]; then
         puppet agent --disable "$1"
       else

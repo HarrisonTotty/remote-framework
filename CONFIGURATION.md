@@ -65,7 +65,7 @@ tasks:
   # ----- Do something complicated -----
   complex_example:
     desc: "Does something a bit more complex."
-    cmd: >-
+    cmd: |
       for i in {foo,bar,baz}; do
         echo "Creating $i..."
         touch $i
