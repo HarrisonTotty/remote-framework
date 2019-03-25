@@ -42,6 +42,7 @@ Be sure to run `chmod +x /usr/local/bin/remote` after you've created the file.
 * `remote` currently doesn't support the `-C`/`--console` flag.
 * Currently only _one_ substitution of the form `[a,b,c...]` or `[x-y]` may be specified with a single string in the `hosts` key of a target specification in the framework configuration file, however you can easily get around this by just specifying multiple strings.
 * When writing multi-line task commands, use `cmd: |` instead of `cmd: >-` to preserve whitespace properly.
+* All tasks are run in a script environment where `set -e` has been set, so it is often the case that you'll need to specify `set +e` to revert this behavior.
 
 ----
 # Usage
