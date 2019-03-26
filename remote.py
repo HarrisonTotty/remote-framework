@@ -473,13 +473,13 @@ def handle_run():
     io.write(io.bold('Running ' + args.run + '...'), 1, 'inf')
     global task
     global argv
-    if ':' in args.run:
-        spl = args.run.split(':')
+    if ' ' in args.run:
+        spl = args.run.split(' ', 1)
         task = spl[0]
-        argv = spl[1:]
+        argv = spl[1]
     else:
         task = args.run
-        argv = []
+        argv = ''
     if args.parallel:
         c_keys = list(connections.keys())
         p = mp.Pool(4)
@@ -594,7 +594,7 @@ def connection_run(host):
     '''
     if args.parallel:
         if args.run:
-            logging.debug('Executing parallel task "' + task + '" with arguments ' + str(argv) + ' on "' + host + '"...')
+            logging.debug('Executing parallel task "' + task + '" with arguments ' + argv + ' on "' + host + '"...')
             true_command = config['tasks'][task]['cmd']
         else:
             logging.debug('Executing parallel command "' + task + '" on "' + host + '"...')
@@ -653,7 +653,7 @@ def connection_run(host):
     else:
         io.write(host, 3, '')
         if args.run:
-            logging.debug('Executing task "' + task + '" with arguments ' + str(argv) + ' on "' + host + '"...')
+            logging.debug('Executing task "' + task + '" with arguments ' + argv + ' on "' + host + '"...')
             true_command = config['tasks'][task]['cmd']
         else:
             logging.debug('Executing command "' + task + '" on "' + host + '"...')

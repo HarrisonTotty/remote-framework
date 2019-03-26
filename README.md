@@ -37,7 +37,6 @@ Be sure to run `chmod +x /usr/local/bin/remote` after you've created the file.
 ## Known Bugs & Potential Issues
 
 * `remote` currently doesn't supply any way for remote commands to attach to the executing terminal's standard input stream. This means that running commands like `less` on remote hosts will currently not work.
-* `remote` currently doesn't support task arguments that contain `:` characters, due to the way that the script calls `str.split(':')` under the hood.
 * `remote` currently doesn't support the `-P`/`--parallel` flag.
 * `remote` currently doesn't support the `-C`/`--console` flag.
 * Currently only _one_ substitution of the form `[a,b,c...]` or `[x-y]` may be specified with a single string in the `hosts` key of a target specification in the framework configuration file, however you can easily get around this by just specifying multiple strings.
@@ -195,10 +194,10 @@ tasks:
       fi
 ```
 
-Task command-line arguments are passed to the script by separating arguments by a single `:` character after the task name. With the above example, one might execute:
+Task command-line arguments are passed to the script by separating arguments by a single space character after the task name. Arguments within quotes work as you would expect. With the above example, one might execute:
 
 ```bash
-$ remote foo{1..5}.example.com -r 'disable_puppet:Doing some debugging on these nodes'
+$ remote foo{1..5}.example.com -r 'disable_puppet "Doing some debugging on these nodes"'
 ```
 
 

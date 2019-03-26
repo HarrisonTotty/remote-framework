@@ -101,7 +101,7 @@ def write_to_file(client, file_path, contents, executable=True):
             raise Exception('Unable to set executable bit on remote file - ' + str(e))
 
 
-def run_task(client, incommand, argv=[]):
+def run_task(client, incommand, argv=''):
     '''
     Executes the specified command on the given client as a task.
     '''
@@ -115,7 +115,7 @@ def run_task(client, incommand, argv=[]):
     except Exception as e:
         raise e
     if argv:
-        run_command = SH_FILE + ' ' + ' '.join(argv)
+        run_command = SH_FILE + ' ' + argv
     else:
         run_command = SH_FILE
     return command(client, run_command)
