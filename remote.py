@@ -298,7 +298,8 @@ def connect():
     dictionary mapped by hostname.
     '''
     EC = 7
-    io.write(io.bold('Connecting to remote hosts...'), 1, 'inf')
+    printed = False
+    logging.debug('Connecting to remote hosts...')
     global connections
     connections = {}
     for t in targets:
@@ -360,6 +361,9 @@ def connect():
                     cert = cert
                 )
             except Exception as e:
+                if not printed:
+                    io.write(io.bold('Connecting to remote hosts...'), 1, '')
+                    printed = True
                 io.write(h, 3, '')
                 io.write(io.red(str(e)), 4, 'err')
                 continue
@@ -371,12 +375,16 @@ def disconnect():
     Disconnects from the various target servers.
     '''
     EC = 9
-    io.write(io.bold('Disconnecting from remote hosts...'), 1, 'inf')
+    printed = False
+    logging.debug('Disconnecting from remote hosts...')
     for h in connections:
         logging.debug('Disconnecting from "' + h + '"...')
         try:
             connections[h].close()
         except Exception as e:
+            if not printed:
+                io.write(io.bold('Disconnecting from remote hosts...'), 1, '')
+                printed = True
             io.write(h, 3, '')
             io.write(io.red('Unable to close connection - ' + str(e)), 4, 'err')
             continue
@@ -526,7 +534,7 @@ def main():
             args.password = getpass.getpass('Enter Connection Password: ')
 
     # Perpare for execution
-    io.write(io.bold('Preparing working environment...'), 1, 'inf')
+    logging.debug('Preparing working environment...')
     validate_environment()
     load_config()
     validate_config()
@@ -694,56 +702,70 @@ def validate_config():
     if 'targets' in config:
         logging.debug('Validating "targets" key...')
         if not isinstance(config['targets'], dict):
+            io.write(io.bold('Preparing working environment...'), 1, '')
             io.write(io.red('Unable to validate "targets" key - key not mapped to dictionary of target specifications.'), 2, 'cri')
             sys.exit(EC)
         for t in config['targets']:
             logging.debug('Validating "' + t + '" target specification...')
             if not isinstance(config['targets'][t], dict):
+                io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - specification not a dictionary of target parameters.'), 2, 'cri')
                 sys.exit(EC)
             if not 'hosts' in config['targets'][t]:
+                io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - target does not specify a list of corresponding hosts.'), 2, 'cri')
                 sys.exit(EC)
             if isinstance(config['targets'][t]['hosts'], str) or not isinstance(config['targets'][t]['hosts'], list):
+                io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - "hosts" parameter is not a list of host strings.'), 2, 'cri')
                 sys.exit(EC)
             if 'user' in config['targets'][t]:
                 if not isinstance(config['targets'][t]['user'], str):
+                    io.write(io.bold('Preparing working environment...'), 1, '')
                     io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - specified "user" parameter is not a username string.'), 2, 'cri')
                     sys.exit(EC)
             if 'password' in config['targets'][t]:
                 if not isinstance(config['targets'][t]['password'], str):
+                    io.write(io.bold('Preparing working environment...'), 1, '')
                     io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - specified "password" parameter is not a password string.'), 2, 'cri')
                     sys.exit(EC)
             if 'cert' in config['targets'][t]:
                 if not isinstance(config['targets'][t]['cert'], str):
+                    io.write(io.bold('Preparing working environment...'), 1, '')
                     io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - specified "cert" parameter is not a certificate file path string.'), 2, 'cri')
                     sys.exit(EC)
             if 'port' in config['targets'][t]:
                 if not isinstance(config['targets'][t]['port'], int):
+                    io.write(io.bold('Preparing working environment...'), 1, '')
                     io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - specified "port" parameter is not an integer.'), 2, 'cri')
                     sys.exit(EC)
                 if config['targets'][t]['port'] < 1:
+                    io.write(io.bold('Preparing working environment...'), 1, '')
                     io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target specification - specified "port" parameter is not a positive integer.'), 2, 'cri')
                     sys.exit(EC)
     if 'tasks' in config:
         logging.debug('Validating "tasks" key...')
         if not isinstance(config['tasks'], dict):
+            io.write(io.bold('Preparing working environment...'), 1, '')
             io.write(io.red('Unable to validate "tasks" key - key not mapped to dictionary of task specifications.'), 2, 'cri')
             sys.exit(EC)
         for t in config['tasks']:
             logging.debug('Validating "' + t + '" task specification...')
             if not isinstance(config['tasks'][t], dict):
+                io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' task specification - specification not a dictionary of task parameters.'), 2, 'cri')
                 sys.exit(EC)
             if not 'cmd' in config['tasks'][t]:
+                io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' task specification - task does not specify a command to execute.'), 2, 'cri')
                 sys.exit(EC)
             if not isinstance(config['tasks'][t]['cmd'], str):
+                io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' task specification - specified "cmd" parameter is not a command string.'), 2, 'cri')
                 sys.exit(EC)
             if 'desc' in config['tasks'][t]:
                 if not isinstance(config['tasks'][t]['desc'], str):
+                    io.write(io.bold('Preparing working environment...'), 1, '')
                     io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' task specification - specified "desc" parameter is not a comment string.'), 2, 'cri')
                     sys.exit(EC)
                     
@@ -754,32 +776,40 @@ def validate_environment():
     '''
     EC = 2
     logging.debug('Looking for argument conflicts...')
-    if not args.run and not args.command and not args.console: 
+    if not args.run and not args.command and not args.console:
+        io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Argument conflict found - One of "-c"/"--command", "-C"/"--console", or "-r"/"--run" must be present.'), 2, 'cri')
         sys.exit(EC)
     if (args.run and args.command) or (args.run and args.console) or (args.console and args.command):
+        io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Argument conflict found - Only one of "-c"/"--command", "-C"/"--console", or "-r"/"--run" may be present.'), 2, 'cri')
         sys.exit(EC)
     logging.debug('Looking for invalid argument values...')
     if args.timeout < 0:
+        io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Invalid argument value found - Value of "-t"/"--timeout" must be zero or a positive integer.'), 2, 'cri')
         sys.exit(EC)
     if args.auth_timeout < 0:
+        io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Invalid argument value found - Value of "--auth-timeout" must be zero or a positive integer.'), 2, 'cri')
         sys.exit(EC)
     if args.command_timeout < 0:
+        io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Invalid argument value found - Value of "-T"/"--command-timeout" must be zero or a positive integer.'), 2, 'cri')
         sys.exit(EC)
     if args.port < 1:
+        io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Invalid argument value found - Value of "--port" must be a positive integer.'), 2, 'cri')
         sys.exit(EC)
     logging.debug('Validating configuration file path...')
     if not os.path.isfile(args.config_file):
+        io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Unable to validate configuration file path - specified file does not exist.'), 2, 'cri')
         sys.exit(EC)
     if args.cert:
         logging.debug('Validating default certificate file path...')
         if not os.path.isfile(args.cert):
+            io.write(io.bold('Preparing working environment...'), 1, '')
             io.write(io.red('Unable to validate default certificate file path - specified file does not exist.'), 2, 'cri')
             sys.exit(EC)
 
@@ -794,10 +824,12 @@ def validate_selected_targets():
         if t == 'other': continue
         logging.debug('Validating "' + t + '" target...')
         if not 'cert' in config['targets'][t] and not 'password' in config['targets'][t] and not args.password and not args.cert:
+            io.write(io.bold('Preparing working environment...'), 1, '')
             io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target - some form of authentication must be specified in the target specification or via CLI arguments.'), 2, 'cri')
             sys.exit(EC)
         if 'cert' in config['targets'][t]:
             if not os.path.isfile(config['targets'][t]['cert']):
+                io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target - specified certificate file does not exist.'), 2, 'cri')
                 sys.exit(EC)
                 
