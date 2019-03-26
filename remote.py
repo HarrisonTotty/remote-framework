@@ -443,8 +443,9 @@ def handle_list_targets():
     try:
         with open(args.config_file, 'r') as f:
             targets = yaml.load(f.read())['targets']
+        longest = max(map(len, targets))
         for t in targets:
-            print(t + '\t: ' + ', '.join(targets[t]['hosts']))
+            print(t + (' ' * (longest - len(t))) + '  :  ' + ', '.join(targets[t]['hosts']))
     except: sys.exit(1)
     sys.exit(0)
 
@@ -456,11 +457,12 @@ def handle_list_tasks():
     try:
         with open(args.config_file, 'r') as f:
             tasks = yaml.load(f.read())['tasks']
+        longest = max(map(len, tasks))
         for t in tasks:
             if 'desc' in tasks[t]:
-                print(t + '\t: ' + tasks[t]['desc'])
+                print(t + (' ' * (longest - len(t))) + '  :  ' + tasks[t]['desc'])
             else:
-                print(t)
+                print(t + (' ' * (longest - len(t))) + '  :  (no description)')
     except: sys.exit(1)
     sys.exit(0)
     
