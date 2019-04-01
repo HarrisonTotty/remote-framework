@@ -103,7 +103,7 @@ def _parse_arguments():
     argparser = argparse.ArgumentParser(
         description = HELP_DESCRIPTION,
         epilog = HELP_EPILOG,
-        usage = 'remote SERVER [...] [FLAGS/OPTIONS] (-c COMMAND | -C | -r TASK)',
+        usage = 'remote SERVERS/TARGETS [FLAGS/OPTIONS] (-c COMMAND | -C | -r TASK)',
         add_help = False,
         formatter_class = lambda prog: argparse.RawDescriptionHelpFormatter(prog, max_help_position=45, width=100)
     )
