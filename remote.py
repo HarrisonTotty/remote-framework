@@ -103,7 +103,7 @@ def _parse_arguments():
     argparser = argparse.ArgumentParser(
         description = HELP_DESCRIPTION,
         epilog = HELP_EPILOG,
-        usage = 'remote SERVER [SERVER2 ...]  [-c COMMAND | -C | -r TASK[:ARG1:ARG2...]]  [...]',
+        usage = 'remote SERVER [SERVER2 ...]  [-c COMMAND | -C | -r TASK]  [...]',
         add_help = False,
         formatter_class = lambda prog: argparse.RawDescriptionHelpFormatter(prog, max_help_position=45, width=100)
     )
@@ -262,7 +262,7 @@ def _parse_arguments():
         default = '',
         dest = 'run',
         help = 'Executes the specified task on the specified target server(s).',
-        metavar = 'TASK[:ARG1...]'
+        metavar = 'TASK [ARGS]'
     )
     argparser.add_argument(
         '-t',
