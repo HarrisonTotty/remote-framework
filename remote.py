@@ -540,6 +540,7 @@ def main():
     validate_config()
     parse_targets()
     validate_selected_targets()
+    validate_selected_task()
 
     # Prepare SSH
     if args.auth_timeout > 0:
@@ -819,7 +820,7 @@ def validate_selected_targets():
     Validates the selected targets.
     '''
     EC = 6
-    logging.debug('Validating the selected targets...')
+    logging.debug('Validating selected targets...')
     for t in targets:
         if t == 'other': continue
         logging.debug('Validating "' + t + '" target...')
@@ -832,8 +833,26 @@ def validate_selected_targets():
                 io.write(io.bold('Preparing working environment...'), 1, '')
                 io.write(io.red('Unable to validate ') + io.bold(t) + io.red(' target - specified certificate file does not exist.'), 2, 'cri')
                 sys.exit(EC)
-                
 
+
+def validate_selected_task():
+    '''
+    Validates the selected task (if there is one).
+    '''
+    EC = 6
+    logging.debug('Validating selected task...')
+    if not args.run:
+        logging.debug('No task specified.')
+        return
+    if ' ' in args.run:
+        tsk = args.run.split(' ', 1)[0]
+    else:
+        tsk = args.run
+    logging.debug('Task Name: ' + tsk)
+    if not tsk in config['tasks']:
+        io.write(io.bold('Preparing working environment...'), 1, '')
+        io.write(io.red('Unable to validate ') + io.bold(tsk) + io.red(' task - specified task does not exist.'), 2, 'cri')
+        sys.exit(EC)
 
     
 # --------------------------------------
