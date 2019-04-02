@@ -38,10 +38,10 @@ Be sure to run `chmod +x /usr/local/bin/remote` after you've created the file.
 
 * `remote` currently doesn't supply any way for remote commands to attach to the executing terminal's standard input stream. This means that running commands like `less` on remote hosts will currently not work.
 * `remote` currently doesn't support the `-P`/`--parallel` flag.
-* `remote` currently doesn't support the `-C`/`--console` flag.
 * Currently only _one_ substitution of the form `[a,b,c...]` or `[x-y]` may be specified with a single string in the `hosts` key of a target specification in the framework configuration file, however you can easily get around this by just specifying multiple strings.
 * When writing multi-line task commands, use `cmd: |` instead of `cmd: >-` to preserve whitespace properly.
 * All tasks are run in a script environment where `set -e` has been set, so it is often the case that you'll need to specify `set +e` to revert this behavior.
+* Implicit task execution is _disabled_ by default in console mode. Run `tasks on` to enable it.
 
 ----
 # Usage
@@ -201,10 +201,54 @@ $ remote foo{1..5}.example.com -r 'disable_puppet "Doing some debugging on these
 ```
 
 
-## Interactive Console (WIP)
+## Interactive Console
 
-The script supports the ability to run in a sort-of interactive terminal mode with the `-C`/`--console` flag.
+The script supports the ability to run in a sort-of interactive terminal mode with the `-C`/`--console` flag. By default, all commands are treated as arbitrary commands to be run on the target server(s), however the console mode does support _implicit task execution_ (disabled by default), whereby the corresponding task definition will be executed on the target server(s). In addition, the console supports the following commands:
 
+| Command(s)       | Description                                                                                |
+|------------------|--------------------------------------------------------------------------------------------|
+| `clear`          | Clears the console.                                                                        |
+| `exit`, `quit`   | Exits the console session.                                                                 |
+| `help`           | Displays information about the built-in console commands.                                  |
+| `tasks [on,off]` | Lists available task names and descriptions _or_ enables/disables implicit task execution. |
+
+The console may also be exited via _CTRL-C_ or _CTRL-D_.
+
+A simple example session might look like the following (also demonstrating implicit task execution):
+
+```
+$ remote host{1,2} -p -C
+Enter Connection Password:
+::  >  help
+   clear           :  Clears the console.
+   exit, quit      :  Exits the console session.
+   help            :  Displays built-in console commands.
+   tasks [on,off]  :  Lists available tasks or enables/disables implicit task execution.
+::  >  tasks
+   Implicit task execution is currently disabled.
+   foo  :  Does something.
+   bar  :  Does something else.
+::  >  echo hello world
+  --> host1
+      hello world
+  --> host2
+      hello world
+::  >  foo
+  --> host1
+      /tmp/reftmp.sh: line 6: foo: command not found
+      Error: Remote execution returned non-zero exit code.
+  --> host2
+      /tmp/reftmp.sh: line 6: foo: command not found
+      Error: Remote execution returned non-zero exit code.
+::  >  tasks on
+   Enabled implicit task execution.
+::  >  foo
+  --> host1
+      This is what "foo" does.
+  --> host2
+      This is what "foo" does.
+::  >  exit
+```
 
 ## Listing Targets and Tasks
 

@@ -63,6 +63,13 @@ def _fmt_step(instring, lvl=0, color=COLOR_BLUE):
 
 # ---------- Public Functions ----------
 
+def blue(instring):
+    '''
+    Returns a blue version of the specified string.
+    '''
+    return colorize(instring, COLOR_BLUE)
+
+
 def bold(instring):
     '''
     Returns a bold version of the specified string.

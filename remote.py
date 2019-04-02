@@ -16,6 +16,7 @@ import logging
 import multiprocessing as mp
 import os
 import re
+import readline
 import shutil
 import socket
 import subprocess
@@ -442,6 +443,92 @@ def handle_console():
     Handle the --console action.
     '''
     EC = 8
+    logging.debug('Starting console session...')
+    try:
+        tasks_on = False
+        while True:
+            logging.debug('Waiting for input...')
+            inpt = input(io.blue('::') + '  ' + io.bold('>') + '  ').strip()
+            logging.debug('Input String: ' + inpt)
+            if inpt == 'clear':
+                logging.debug('Clearing screen...')
+                os.system('clear')
+            elif inpt == 'exit' or inpt == 'quit':
+                logging.debug('Exiting console session...')
+                return
+            elif inpt == 'help':
+                logging.debug('Displaying help...')
+                print('   clear           :  Clears the console.')
+                print('   exit, quit      :  Exits the console session.')
+                print('   help            :  Displays built-in console commands.')
+                print('   tasks [on,off]  :  Lists available tasks or enables/disables implicit task execution.')
+            elif inpt == 'tasks' or inpt.startswith('tasks '):
+                if ' ' in inpt:
+                    choice = inpt.split(' ', 1)[1].strip()
+                    if choice == 'on':
+                        tasks_on = True
+                        io.write('Enabled implicit task execution.', 2, 'inf')
+                    elif choice == 'off':
+                        tasks_on = False
+                        io.write('Disabled implicit task execution.', 2, 'inf')
+                    else:
+                        io.write(io.orange('Please specify "on" or "off".'), 2, 'war')
+                elif 'tasks' in config:
+                    logging.debug('Listing tasks...')
+                    print('   Implicit task execution is currently ' + (io.bold('enabled') if tasks_on else io.bold('disabled')) + '.')
+                    longest = max(map(len, config['tasks']))
+                    for t in config['tasks']:
+                        if 'desc' in config['tasks'][t]:
+                            io.write(t + (' ' * (longest - len(t))) + '  :  ' + config['tasks'][t]['desc'], 2, '')
+                        else:
+                            io.write(t + (' ' * (longest - len(t))) + '  :  (no description)', 2, '')
+                else:
+                    io.write('No tasks defined in loaded configuration file.', 2, 'war')
+            else:
+                if ' ' in inpt:
+                    splt = inpt.split(' ', 1)
+                    taskname = splt[0]
+                    taskargs = splt[1]
+                else:
+                    taskname = inpt
+                    taskargs = ''
+                if tasks_on and 'tasks' in config and taskname in config['tasks']:
+                    logging.debug('Executing input as task...')
+                    true_command = config['tasks'][taskname]['cmd']
+                else:
+                    logging.debug('Executing input as arbitrary command...')
+                    true_command = inpt
+                for h in connections:
+                    io.write(h, 3, '')
+                    if taskargs:
+                        logging.debug('Executing task "' + taskname + '" with arguments ' + taskargs + ' on "' + h + '"...')
+                    else:
+                        logging.debug('Executing command "' + inpt + '" on "' + h + '"...')
+                    try:
+                        stdout = ssh.run_task(connections[h], true_command, taskargs)
+                        for l in iter(stdout.readline, ''):
+                            logging.info(h + ' : ' + l.rstrip())
+                            io.write(l.rstrip(), 4, '')
+                        ec = stdout.channel.recv_exit_status()
+                        stdout.close()
+                    except Exception as e:
+                        io.write(io.red('Unable to execute command(s) - ' + str(e)), 4, '')
+                        logging.critical('Unable to execute command(s) on host "' + h + '" - ' + str(e))
+                        sys.exit(EC)
+                    if ec != 0:
+                        logging.error(h + ' < ' + str(ec))
+                        io.write(io.red('Error: Remote execution returned non-zero exit code.'), 4, '')
+                    else:
+                        logging.debug(h + ' < ' + str(ec))
+                
+    except (EOFError, KeyboardInterrupt):
+        logging.debug('Recieved CTRL-C or CTRL-D - exiting console session...')
+        return
+    except Exception as e:
+        io.write(io.red('Encountered console exception - ' + str(e)), 2, 'err')
+        disconnect()
+        sys.exit(EC)
+        
 
 
 def handle_list_targets():
@@ -785,6 +872,8 @@ def validate_environment():
         io.write(io.bold('Preparing working environment...'), 1, '')
         io.write(io.red('Argument conflict found - Only one of "-c"/"--command", "-C"/"--console", or "-r"/"--run" may be present.'), 2, 'cri')
         sys.exit(EC)
+    if args.console and args.output_only:
+        sys.exit('Error: "-C"/"--console" may not be specified with "-o"/"--output-only" (or redirected to a file).')
     logging.debug('Looking for invalid argument values...')
     if args.timeout < 0:
         io.write(io.bold('Preparing working environment...'), 1, '')
