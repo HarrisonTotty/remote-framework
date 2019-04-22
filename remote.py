@@ -540,7 +540,14 @@ def handle_list_targets():
             targets = yaml.load(f.read())['targets']
         longest = max(map(len, targets))
         for t in targets:
-            print(t + (' ' * (longest - len(t))) + '  :  ' + ', '.join(targets[t]['hosts']))
+            hosts = targets[t]['hosts']
+            if len(hosts) == 1:
+                print(t + (' ' * (longest - len(t))) + '  :  ' + hosts[0])
+            else:
+                print(t + (' ' * (longest - len(t))) + '  :  ' + hosts[0] + ',')
+                for h in hosts[1:-1]:
+                    print((' ' * longest) + '     ' + h + ',')
+                print((' ' * longest) + '     ' + hosts[-1])
     except: sys.exit(1)
     sys.exit(0)
 
