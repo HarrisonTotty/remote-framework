@@ -407,7 +407,7 @@ def load_config():
     logging.debug('Parsing configuration file...')
     try:
         global config
-        config = yaml.load(raw_config)
+        config = yaml.safe_load(raw_config)
     except Exception as e:
         io.write(io.red('Unable to parse configuration file - ' + str(e)), 2, 'cri')
         sys.exit(EC)
@@ -537,7 +537,7 @@ def handle_list_targets():
     '''
     try:
         with open(args.config_file, 'r') as f:
-            targets = yaml.load(f.read())['targets']
+            targets = yaml.safe_load(f.read())['targets']
         longest = max(map(len, targets))
         for t in targets:
             hosts = targets[t]['hosts']
@@ -558,7 +558,7 @@ def handle_list_tasks():
     '''
     try:
         with open(args.config_file, 'r') as f:
-            tasks = yaml.load(f.read())['tasks']
+            tasks = yaml.safe_load(f.read())['tasks']
         longest = max(map(len, tasks))
         for t in tasks:
             if 'desc' in tasks[t]:
